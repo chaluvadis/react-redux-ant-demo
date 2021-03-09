@@ -1,0 +1,13 @@
+@import '~antd/dist/antd.css';
+.app {
+   margin-left: 30px;
+   margin-right: 30px;
+   margin-top: 30px;
+}
+.shiftrow {
+  cursor: pointer;
+}
+
+.pullright {
+  float: right;
+}
