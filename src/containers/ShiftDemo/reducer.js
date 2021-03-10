@@ -1,31 +1,20 @@
-import { SHOW_CONFIG_DRAWER, HIDE_CONFIG_DRAWER, SHOW_SHIFT_DRAWER, HIDE_SHIFT_DRAWER } from "./constant";
-
+import { SET_SHIFT_DATA, SET_SELECTED_ROW } from "./constant";
 let defaultState = {
-    showShiftModal: false,
-    showConfigModal: false
+    shift: [],
+    selectedRow: null
 };
 
 const shiftReducer = (state = defaultState, action) => {
     switch (action.type) {
-        case SHOW_SHIFT_DRAWER:
+        case SET_SHIFT_DATA:
             return {
                 ...state,
-                showShiftModal: true
+                shift: action.payload
             };
-        case HIDE_SHIFT_DRAWER:
+        case SET_SELECTED_ROW:
             return {
                 ...state,
-                showShiftModal: false
-            };
-        case SHOW_CONFIG_DRAWER:
-            return {
-                ...state,
-                showConfigModal: true
-            };
-        case HIDE_CONFIG_DRAWER:
-            return {
-                ...state,
-                showConfigModal: false
+                selectedRow: action.payload
             };
         default:
             return state;

@@ -1,57 +1,9 @@
-import { Table, Space, Button, Modal } from "antd";
+import { Table, Modal } from "antd";
+import { useEffect } from "react";
 import { connect, useDispatch } from "react-redux";
-import { show_config_drawer, hide_config_drawer, show_shift_drawer, hide_shift_drawer } from "./action";
-const data = [{
-    key: 1,
-    id: 1,
-    assignment: "Assignment_12",
-    shift: "Buhasa_1",
-    nextShift: "Buhasa_2",
-    prevShift: "",
-    startTime: (new Date()).toDateString(),
-    endTime: (new Date()).toDateString(),
-    status: "Active"
-}, {
-    key: 2,
-    id: 2,
-    assignment: "Assignment_13",
-    shift: "Buhasa_2",
-    nextShift: "Buhasa_3",
-    prevShift: "Buhasa_1",
-    startTime: (new Date()).toDateString(),
-    endTime: (new Date()).toDateString(),
-    status: "Active"
-}, {
-    key: 3,
-    id: 3,
-    assignment: "Assignment_14",
-    shift: "Buhasa_3",
-    nextShift: "Buhasa_4",
-    prevShift: "Buhasa_2",
-    startTime: (new Date()).toDateString(),
-    endTime: (new Date()).toDateString(),
-    status: "Active"
-}, {
-    key: 4,
-    id: 4,
-    assignment: "Assignment_15",
-    shift: "Buhasa_4",
-    nextShift: "Buhasa_5",
-    prevShift: "Buhasa_3",
-    startTime: (new Date()).toDateString(),
-    endTime: (new Date()).toDateString(),
-    status: "Active"
-}, {
-    key: 5,
-    id: 5,
-    assignment: "Assignment_16",
-    shift: "Buhasa_5",
-    nextShift: "Buhasa_6",
-    prevShift: "Buhasa_4",
-    startTime: (new Date()).toDateString(),
-    endTime: (new Date()).toDateString(),
-    status: "Active"
-}];
+import { set_shift_data, set_selected_row } from "./action";
+import { show_shift_drawer, hide_shift_drawer } from "../util/action";
+import ViewDataComponent from "../ViewData/index";
 const columns = [{
     title: "Id",
     dataIndex: "id",
@@ -85,28 +37,20 @@ const columns = [{
     dataIndex: "status",
     key: "status"
 }];
-const ShiftDemo = ({ showShiftModal, showConfigModal }) => {
+const ShiftDemo = ({ selectedRow, shift, showConfigModal, showShiftModal, set_shift_data }) => {
     const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(set_shift_data());
+    }, []);
     const rowClick = (record, rowIndex) => {
-        dispatch(show_config_drawer());
-        console.log(rowIndex, JSON.stringify(record));
-    };
-    const newShift = () => {
         dispatch(show_shift_drawer());
+        dispatch(set_selected_row(record));
     };
-    const hideShiftModal = () => {
+    const handleCancel = () => {
         dispatch(hide_shift_drawer());
-    };
-    const hideConfigModal = () => {
-        dispatch(hide_config_drawer());
     };
     return (
         <>
-            <Space direction={"horizontal"}>
-                <div className="pullright">
-                    <Button type={"primary"} onClick={newShift} title="Add New Shift">Add New Shift</Button>
-                </div>
-            </Space>
             <Table
                 rowKey="shiftrows"
                 key="shiftdemotable"
@@ -117,20 +61,21 @@ const ShiftDemo = ({ showShiftModal, showConfigModal }) => {
                         onClick: (e) => rowClick(record, rowIndex)
                     };
                 }}
-                dataSource={data}
+                dataSource={shift}
                 columns={columns} />
-            <Modal key="assignment" onCancel={hideShiftModal} visible={showShiftModal}>
-                Allow the modal to Add new assignment
-            </Modal>
-            <Modal key="config" onCancel={hideConfigModal} visible={showConfigModal}>
-                Allow the modal to config the modal
+            <Modal visible={showShiftModal} onCancel={handleCancel}>
+                <ViewDataComponent data={selectedRow} />
             </Modal>
         </>
     );
 };
 
-const mapStatetoProps = ({ shiftReducer: { showShiftModal, showConfigModal } }) => {
-    return { showShiftModal, showConfigModal };
+const mapStatetoProps = ({ shiftReducer: { selectedRow, shift },
+    utilReducer: { showConfigModal, showShiftModal } }) => {
+    return { selectedRow, shift, showConfigModal, showShiftModal };
 };
 
-export default connect(mapStatetoProps)(ShiftDemo);
+const mapActiontoProps = { set_shift_data };
+
+export default connect(mapStatetoProps,
+    mapActiontoProps)(ShiftDemo);
